@@ -51,7 +51,7 @@ platform :ios do
       )
     end
 
-    # @profiles.each { |profile| install_provisioning_profile(path: profile) }
+    @profiles.each { |profile| install_provisioning_profile(path: profile) }
 
     update_targets = nil
     if !ENV['UPDATE_TARGETS'].empty?
@@ -60,28 +60,42 @@ platform :ios do
       update_targets = ENV['DISABLE_TARGETS'].split(/,/)
     end
 
-    update_code_signing_settings(
-      # use_automatic_signing: false,
-      use_automatic_signing: true,
-      path: ENV['PROJECT_PATH'],
-      # code_sign_identity: ENV['CODE_SIGNING_IDENTITY'],
-      targets: update_targets
-    )
+    if !ENV['AUTOMATIC_SIGNING'].empty?
+      if ENV['AUTOMATIC_SIGNING']?
+        update_code_signing_settings(
+          use_automatic_signing: ENV['AUTOMATIC_SIGNING'],
+          path: ENV['PROJECT_PATH'],
+          targets: update_targets
+        )
+      else
+        update_code_signing_settings(
+          use_automatic_signing: ENV['AUTOMATIC_SIGNING'],
+          path: ENV['PROJECT_PATH'],
+          code_sign_identity: ENV['CODE_SIGNING_IDENTITY'],
+          targets: update_targets
+        )
+    else
+      update_code_signing_settings(
+        use_automatic_signing: false,
+        path: ENV['PROJECT_PATH'],
+        code_sign_identity: ENV['CODE_SIGNING_IDENTITY'],
+        targets: update_targets
+      )
 
-    # if @profiles.length == 1
-    #   update_project_provisioning(
-    #     xcodeproj: ENV['PROJECT_PATH'],
-    #     profile: @profiles[0],
-    #     target_filter:
-    #       if update_targets
-    #         update_targets.map { |target| "^#{Regexp.escape(target)}$" }.join(
-    #           '|'
-    #         )
-    #       else
-    #         nil
-    #       end
-    #   )
-    # end
+    if @profiles.length == 1
+      update_project_provisioning(
+        xcodeproj: ENV['PROJECT_PATH'],
+        profile: @profiles[0],
+        target_filter:
+          if update_targets
+            update_targets.map { |target| "^#{Regexp.escape(target)}$" }.join(
+              '|'
+            )
+          else
+            nil
+          end
+      )
+    end
 
     update_project_team(
       path: ENV['PROJECT_PATH'], teamid: ENV['TEAM_ID'], targets: update_targets
@@ -228,20 +242,20 @@ platform :ios do
       end
     end
 
-    # @profiles = []
-    # if ENV['MOBILEPROVISION_PATH'].empty?
-    #   ENV['MOBILEPROVISION_BASE64'].split(/\R/).each.with_index(
-    #     1
-    #   ) do |profile, index|
-    #     filename = "ios-build-#{index}.mobileprovision"
-    #     puts "creating ../#{filename}"
-    #     File.write("../#{filename}", Base64.decode64(profile))
-    #     @profiles.push(filename)
-    #   end
-    # else
-    #   ENV['MOBILEPROVISION_PATH'].split(/\R/).each.with_index(
-    #     1
-    #   ) { |profile, index| @profiles.push(profile) }
-    # end
+    @profiles = []
+    if ENV['MOBILEPROVISION_PATH'].empty?
+      ENV['MOBILEPROVISION_BASE64'].split(/\R/).each.with_index(
+        1
+      ) do |profile, index|
+        filename = "ios-build-#{index}.mobileprovision"
+        puts "creating ../#{filename}"
+        File.write("../#{filename}", Base64.decode64(profile))
+        @profiles.push(filename)
+      end
+    else
+      ENV['MOBILEPROVISION_PATH'].split(/\R/).each.with_index(
+        1
+      ) { |profile, index| @profiles.push(profile) }
+    end
   end
 end
