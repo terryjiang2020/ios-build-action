@@ -74,6 +74,20 @@ platform :ios do
           code_sign_identity: ENV['CODE_SIGNING_IDENTITY'],
           targets: update_targets
         )
+        if @profiles.length == 1
+          update_project_provisioning(
+            xcodeproj: ENV['PROJECT_PATH'],
+            profile: @profiles[0],
+            target_filter:
+              if update_targets
+                update_targets.map { |target| "^#{Regexp.escape(target)}$" }.join(
+                  '|'
+                )
+              else
+                nil
+              end
+          )
+        end
       end
     else
       update_code_signing_settings(
@@ -82,22 +96,22 @@ platform :ios do
         code_sign_identity: ENV['CODE_SIGNING_IDENTITY'],
         targets: update_targets
       )
+      if @profiles.length == 1
+        update_project_provisioning(
+          xcodeproj: ENV['PROJECT_PATH'],
+          profile: @profiles[0],
+          target_filter:
+            if update_targets
+              update_targets.map { |target| "^#{Regexp.escape(target)}$" }.join(
+                '|'
+              )
+            else
+              nil
+            end
+        )
+      end
     end
 
-    if @profiles.length == 1
-      update_project_provisioning(
-        xcodeproj: ENV['PROJECT_PATH'],
-        profile: @profiles[0],
-        target_filter:
-          if update_targets
-            update_targets.map { |target| "^#{Regexp.escape(target)}$" }.join(
-              '|'
-            )
-          else
-            nil
-          end
-      )
-    end
 
     update_project_team(
       path: ENV['PROJECT_PATH'], teamid: ENV['TEAM_ID'], targets: update_targets
