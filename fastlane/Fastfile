@@ -74,6 +74,7 @@ platform :ios do
           code_sign_identity: ENV['CODE_SIGNING_IDENTITY'],
           targets: update_targets
         )
+      end
     else
       update_code_signing_settings(
         use_automatic_signing: false,
@@ -81,6 +82,7 @@ platform :ios do
         code_sign_identity: ENV['CODE_SIGNING_IDENTITY'],
         targets: update_targets
       )
+    end
 
     if @profiles.length == 1
       update_project_provisioning(
