@@ -61,7 +61,7 @@ platform :ios do
     end
 
     if !ENV['AUTOMATIC_SIGNING'].empty?
-      if ENV['AUTOMATIC_SIGNING'] == 'true'?
+      if ENV['AUTOMATIC_SIGNING'] == 'true'
         update_code_signing_settings(
           use_automatic_signing: true,
           path: ENV['PROJECT_PATH'],
