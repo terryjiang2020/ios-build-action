@@ -60,7 +60,7 @@ platform :ios do
       update_targets = ENV['DISABLE_TARGETS'].split(/,/)
     end
 
-    if !ENV['AUTOMATIC_SIGNING'].empty? && ENV['AUTOMATIC_SIGNING'] == 'true'
+    if ENV['AUTOMATIC_SIGNING'] == 'true'
       update_code_signing_settings(
         use_automatic_signing: true,
         path: ENV['PROJECT_PATH'],
