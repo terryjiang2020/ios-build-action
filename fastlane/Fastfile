@@ -60,12 +60,20 @@ platform :ios do
       update_targets = ENV['DISABLE_TARGETS'].split(/,/)
     end
 
-    update_code_signing_settings(
-      use_automatic_signing: false,
-      path: ENV['PROJECT_PATH'],
-      code_sign_identity: ENV['CODE_SIGNING_IDENTITY'],
-      targets: update_targets
-    )
+    if !ENV['AUTOMATIC_SIGNING'].empty? && ENV['AUTOMATIC_SIGNING'] == 'true'
+      update_code_signing_settings(
+        use_automatic_signing: true,
+        path: ENV['PROJECT_PATH'],
+        targets: update_targets
+      )
+    else
+      update_code_signing_settings(
+        use_automatic_signing: false,
+        path: ENV['PROJECT_PATH'],
+        code_sign_identity: ENV['CODE_SIGNING_IDENTITY'],
+        targets: update_targets
+      )
+    end
 
     if @profiles.length == 1
       update_project_provisioning(
