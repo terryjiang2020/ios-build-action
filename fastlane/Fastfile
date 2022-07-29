@@ -60,27 +60,59 @@ platform :ios do
       update_targets = ENV['DISABLE_TARGETS'].split(/,/)
     end
 
-    update_code_signing_settings(
-      use_automatic_signing: false,
-      path: ENV['PROJECT_PATH'],
-      code_sign_identity: ENV['CODE_SIGNING_IDENTITY'],
-      targets: update_targets
-    )
-
-    if @profiles.length == 1
-      update_project_provisioning(
-        xcodeproj: ENV['PROJECT_PATH'],
-        profile: @profiles[0],
-        target_filter:
-          if update_targets
-            update_targets.map { |target| "^#{Regexp.escape(target)}$" }.join(
-              '|'
-            )
-          else
-            nil
-          end
+    if !ENV['AUTOMATIC_SIGNING'].empty?
+      if ENV['AUTOMATIC_SIGNING'] == 'true'
+        update_code_signing_settings(
+          use_automatic_signing: true,
+          path: ENV['PROJECT_PATH'],
+          targets: update_targets
+        )
+        enable_automatic_code_signing(path: ENV['PROJECT_PATH'])
+      else
+        update_code_signing_settings(
+          use_automatic_signing: false,
+          path: ENV['PROJECT_PATH'],
+          code_sign_identity: ENV['CODE_SIGNING_IDENTITY'],
+          targets: update_targets
+        )
+        if @profiles.length == 1
+          update_project_provisioning(
+            xcodeproj: ENV['PROJECT_PATH'],
+            profile: @profiles[0],
+            target_filter:
+              if update_targets
+                update_targets.map { |target| "^#{Regexp.escape(target)}$" }.join(
+                  '|'
+                )
+              else
+                nil
+              end
+          )
+        end
+      end
+    else
+      update_code_signing_settings(
+        use_automatic_signing: false,
+        path: ENV['PROJECT_PATH'],
+        code_sign_identity: ENV['CODE_SIGNING_IDENTITY'],
+        targets: update_targets
       )
+      if @profiles.length == 1
+        update_project_provisioning(
+          xcodeproj: ENV['PROJECT_PATH'],
+          profile: @profiles[0],
+          target_filter:
+            if update_targets
+              update_targets.map { |target| "^#{Regexp.escape(target)}$" }.join(
+                '|'
+              )
+            else
+              nil
+            end
+        )
+      end
     end
+
 
     update_project_team(
       path: ENV['PROJECT_PATH'], teamid: ENV['TEAM_ID'], targets: update_targets
@@ -159,7 +191,7 @@ platform :ios do
       sdk: use_build_sdk ? ENV['BUILD_SDK'] : nil,
       destination: use_build_destination ? ENV['BUILD_DESTINATION'] : nil
     )
-
+    upload_to_testflight
     delete_keychain(name: 'ios-build.keychain')
   end
 

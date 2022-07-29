@@ -82,6 +82,10 @@ inputs:
     description: "Path for Swift Package Manager dependencies"
     required: false
     default: ""
+  automatic-signing:
+    description: "Whether use automatic signing or not"
+    required: false
+    default: ""
 runs:
   using: "node12"
   main: "dist/index.js"
