@@ -75,7 +75,7 @@ platform :ios do
       )
     end
 
-    if @profiles.length == 1
+    if @profiles.length == 1 && ENV['AUTOMATIC_SIGNING'] != 'true'
       update_project_provisioning(
         xcodeproj: ENV['PROJECT_PATH'],
         profile: @profiles[0],
