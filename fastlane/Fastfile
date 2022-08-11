@@ -251,4 +251,6 @@ platform :ios do
       ) { |profile, index| @profiles.push(profile) }
     end
   end
+
+  upload_to_testflight
 end
