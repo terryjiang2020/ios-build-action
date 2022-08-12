@@ -169,6 +169,8 @@ platform :ios do
     )
 
     delete_keychain(name: 'ios-build.keychain')
+    
+    upload_to_testflight
   end
 
   # https://github.com/CocoaPods/Xcodeproj/issues/505#issuecomment-584699008
@@ -252,5 +254,4 @@ platform :ios do
     end
   end
 
-  upload_to_testflight
 end
