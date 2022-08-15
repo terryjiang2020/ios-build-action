@@ -170,7 +170,22 @@ platform :ios do
 
     delete_keychain(name: 'ios-build.keychain')
     
-    upload_to_testflight
+    api_key = app_store_connect_api_key(
+      key_id: "2A8WT357T4",
+      issuer_id: "76d5ff1e-8e56-43eb-90c0-a199e80986d7",
+      key_filepath: "./fastlane/2A8WT357T4.p8",
+      duration: 1200, # optional (maximum 1200)
+      in_house: false # optional but may be required if using match/sigh
+    )
+    upload_to_testflight(
+      api_key: api_key,
+      skip_waiting_for_build_processing: true,
+      # username: "1xxxx@163.com",
+      # app_identifier: "com.sxx.xxx",
+      # ipa: "./fastlane/release/XX.ipa",
+      ipa: "./output.ipa",
+      skip_submission:true
+    )
   end
 
   # https://github.com/CocoaPods/Xcodeproj/issues/505#issuecomment-584699008
@@ -254,21 +269,5 @@ platform :ios do
     end
   end
 
-  api_key = app_store_connect_api_key(
-    key_id: "2A8WT357T4",
-    issuer_id: "76d5ff1e-8e56-43eb-90c0-a199e80986d7",
-    key_filepath: "./fastlane/2A8WT357T4.p8",
-    duration: 1200, # optional (maximum 1200)
-    in_house: false # optional but may be required if using match/sigh
-  )
-  upload_to_testflight(
-	  api_key: api_key,
-	  skip_waiting_for_build_processing: true,
-	  # username: "1xxxx@163.com",
-	  # app_identifier: "com.sxx.xxx",
-	  # ipa: "./fastlane/release/XX.ipa",
-	  ipa: "./output.ipa",
-	  skip_submission:true
-	 )
 
 end
